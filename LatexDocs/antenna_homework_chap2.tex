@@ -1,0 +1,121 @@
+\documentclass[a4paper,11pt]{article}
+\usepackage{xeCJK}
+\usepackage{mylinuxfonts}
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{amssymb}
+\usepackage{mathrsfs}
+\usepackage{amsbsy}
+\usepackage{xcolor}
+\usepackage{graphicx} % Allows including images
+%\usepackage{multicol}
+
+%%========================================
+
+\begin{document}
+
+\title{\youyuan{\textbf{天线第三次作业\\}}}
+\author{\textbf{刘洋} \\ \\ 学号:$201428007326027$ \\
+\\$liuyang614@mails.ucas.ac.cn$\\  \\{\kaishu{空间中心}}}
+
+\date{2015-03-24}
+\maketitle
+
+% 以下为 作业内容
+\newpage
+%\textcolor[rgb]{0,0,1}{\huge{1. 2.1-2}}
+\section{2.1-2}
+解： 最大相位误差为$\cfrac{\pi}{4}$，即要求波程差为$\cfrac{\lambda}{8}$。\\
+由远区场和辐射近区的边界知，
+$$\cfrac{L^2}{8r}\geq \cfrac{\lambda}{8}\quad\Longrightarrow \quad  r\leq \cfrac{L^2}{\lambda}$$
+由辐射近区和感应近区的边界知，
+$$\cfrac{L^3}{24\sqrt{3}r^2}\leq \cfrac{\lambda}{8}\quad\Longrightarrow\quad r^2\geq\cfrac{L^3}{3\sqrt{3}\lambda} \quad \Longrightarrow\quad r\geq 0.44\sqrt{\cfrac{L^3}{\lambda}}$$
+综上，$$0.44\sqrt{\cfrac{L^3}{\lambda}}\leq r\leq \cfrac{L^2}{\lambda}$$
+\\
+当$L=10\, m$，$\lambda=7.6\,cm =7.6\times 10^{-2}\,m$，时，代入上式得，
+$$
+0.44\sqrt{\cfrac{10^3}{7.6\times10^{-2}}}\leq r\leq \cfrac{10^2}{7.6\times10^{-2}} \quad\Longrightarrow \quad 50.47\,m\leq r\leq 1315.79\,m
+$$
+\\
+
+
+\section{2.1-4}
+解：本题主要利用远区场的条件 来解决。$r\gg L,\quad r\gg\cfrac{\lambda}{2\pi},\quad r\geq\cfrac{2L^2}{\lambda}$。\\
+1) $\quad L=1\,m,\,f=1\,MHz$\\
+\\
+易知，$\lambda=\cfrac{v}{f}=\cfrac{3\times 10^8}{10^6}=300\,m,\quad\cfrac{\lambda}{2\pi}=\cfrac{300}{2\pi}=47.75\,m,$ \\
+\\
+$\cfrac{2L^2}{\lambda}=\cfrac{2}{300}=0.0067\,m$\\
+\\
+综上，$r\geq 47.75\,m$，即获得天线方向图最小距离为$47.75\,m$。\\
+\\
+2) $\quad L=0.8\,m,\,f=1.8\,GHz$\\
+\\
+易知，$\lambda=\cfrac{v}{f}=\cfrac{3\times 10^8}{1.8\times 10^9}=\cfrac{1}{6}\,m,\quad\cfrac{\lambda}{2\pi}=\cfrac{0.8}{2\pi}=0.127\,m,$ \\
+\\
+$\cfrac{2L^2}{\lambda}=\cfrac{2\times 0.8^2}{1/6}=7.68\,m$\\
+\\
+综上，$r\geq 7.68\,m$，即获得天线方向图最小距离为$7.68\,m$。\\
+\\
+3) $\quad L=13\,m,\,f=6\,GHz$\\
+\\
+易知，$\lambda=\cfrac{v}{f}=\cfrac{3\times 10^8}{6\times 10^9}=\cfrac{1}{20}\,m,\quad\cfrac{\lambda}{2\pi}=\cfrac{13}{2\pi}=2.07\,m,$ \\
+\\
+$\cfrac{2L^2}{\lambda}=\cfrac{2\times 13^2}{1/20}=6760\,m$\\
+\\
+综上，$r\geq 6760\,m$，即获得天线方向图最小距离为$6760\,m$。\\
+
+
+
+\section{2.1-8}
+解： 长为$L$的对称振子的辐射电阻为$$R_r=30[2(C\,+\,ln\,kL\,-\,Ci\,kL)\,+\,(sin\,kL)(Si\,2kL\,-\,2Si\,kL)\,+\,(cos\,kL)(C\,+\,ln\,\cfrac{1}{2}kL\,+\,Ci\,2kL\,-\,2Ci\,kL)]$$
+其中，$C=0.5772$，$Si$为正弦积分，$Ci$为余弦积分。
+\\
+1)$\quad L=2l=\cfrac{\lambda}{4}$\\
+此时，$kL=\cfrac{2\pi}{\lambda}\cfrac{\lambda}{4}=\cfrac{\pi}{2}$，查表2.1-2知，$Si\,\cfrac{\pi}{2}=1.371,\;Ci\,\cfrac{\pi}{2}=0.472,\;Si\,\pi=1.852,\;Ci\,\pi=0.074$。\\
+$R_r=30[2(0.5772+ln\,\cfrac{\pi}{2}-0.472)+sin\,\cfrac{\pi}{2}\times (1.852-2\times 1.371)+cos\,\cfrac{\pi}{2}\times (0.5772+ln\,\cfrac{\pi}{4}+0.074-2\times 0.472)]=6.71\,\Omega$\\
+\\
+2)$\quad L=2l=\lambda$\\
+ 此时，$kL=\cfrac{2\pi}{\lambda}\lambda=2\pi$，查表2.1-2知，$Si\,2\pi=1.418,\;Ci\,2\pi=-0.0227,\;Si\,4\pi=1.492,\;Ci\,4\pi=-0.006$。\\
+$R_r=30[2\times (0.5772+ln\,2\pi+0.0227)+cos2\pi\times (0.5772+ln\,\pi-0.006-2\times (-0.0027))]=197.9\,\Omega$
+
+\section{2.2-1}
+解：已知辐射功率$P_r=10\,W$，方向系数$D=200$，距离$r=37590\,km=3.759\times 10^7\,m$。\\
+到达北京的平均功率为$P_1=\cfrac{P_rD}{4\pi r^2}=\cfrac{10\times 200}{4\pi\times (3.759\times 10^7)^2}=1.126\times 10^{-13}\,W/m^2$\\
+又有$P_1=\cfrac{1}{2}\cfrac{|E|^2}{120\pi}$，\\
+可得，到达北京的场强为$|E|=\sqrt{240\pi P_1}=\sqrt{1.126\times 10^{-13}\times 240\pi}=9.22\times 10^{-6}\,v/m=9.22\,\mu v$\\
+\\
+要保证场强不变，无向天线的功率为$P_r'=P_rD=10\times 200=2000\,W$\\
+\\
+\section{2.2-4}
+解： 方向函数$F(\theta,\phi)=sin\theta sin^2\phi\quad(0\leq\theta\leq\pi,\,0\leq\phi\leq\pi)$\\
+1) 方向系数
+$$
+D=\cfrac{4\pi}{\int_0^{\pi}\int_0^{\pi}F^2(\theta,\phi)sin\theta d\theta d\phi }=\cfrac{4\pi}{\int_0^{\pi}\int_0^{\pi}\sin^4\phi sin^3\theta d\theta d\phi }=\cfrac{4\pi}{\cfrac{4}{3}\times \cfrac{3}{8}\pi}=8
+$$
+2)在$\theta=\cfrac{\pi}{2}$平面，由$F^2(\cfrac{\pi}{2},\phi _{0.5})=sin^4\phi=0.5$知，$\phi _{0.5}=57.23^\circ$，故半功率宽度为$HP_{\phi}=2\phi_{0.5}=114.46^\circ$。\\
+在$\phi=\cfrac{\pi}{2}$的平面，由$F^2(\theta,\cfrac{\pi}{2})=sin^2\theta=0.5$知，$\theta_{0.5}=45^\circ$，故半功率宽度为$HP_{\theta}=2\theta_{0.5}=90^\circ$$HP_{\theta}=2\theta_{0.5}=90^\circ$
+3)由克劳斯近似式知，方向系数为$D\approx\cfrac{41253}{HP_{\phi}\cdot HP_{\theta}}=\cfrac{41253}{114.46\times 90}=4$\\
+\\
+
+\section{2.2-7}
+解：波长为$\lambda=\cfrac{c}{f}=\cfrac{3\times 10^8}{10\times 10^6}=30\,m$\\
+表面电阻为$R_s=\sqrt{\cfrac{\pi f\mu}{\sigma}}=\sqrt{\cfrac{\pi\times 10\times 10^6\times 4\pi \times 10^{-7}}{5.8\times 10^7}}=8.25\times 10^{-4}\,\Omega$\\
+方向系数为$D=\cfrac{120f_M^2}{R_r}=\cfrac{120(1-coskl)^2}{R_r}$\\
+1) 当$2l=\cfrac{\lambda}{4}$时，由$2.1-8$知，辐射电阻$R_r=6.71\,\Omega$。\\
+方向系数为$D=\cfrac{120\times (1-cos\cfrac{\pi}{4})}{6.71}=1.534$\\
+损耗电阻为$R_{\sigma}=\cfrac{2P_{\sigma}}{I^2_M}=\cfrac{1}{I^2_M}\cfrac{R_s}{2\pi a}\int_{-l}^{l}|I(z)|^2dz=\cfrac{R_s}{\pi a}\int_0^lsin^2k(l-z)dz=\cfrac{R_s}{\pi a}[\cfrac{1}{2}z+\cfrac{1}{4k}sin 2k(l-z)]_0^l=\cfrac{R_s}{\pi a}(\cfrac{l}{2}-\cfrac{1}{4k})=\cfrac{8.25\times 10^{-4}}{\pi\times 10^{-3}\times 30}(\cfrac{1}{2}\cfrac{30}{8}-\cfrac{30}{4\times 2\pi}=0.006\,\Omega$\\
+天线效率为$e_r=\cfrac{R_r}{R_r+R_{\sigma}}=\cfrac{6.71}{6.71+0.006}=99.9\,\%$\\
+天线增益为$G=De_r=1.534\times 0.999=1.532$，即$G=10lg\,1.532=1.85\,dB$\\
+\\
+2) 当$2l=\lambda$时，由$2.1-8$知，辐射电阻$R_r=197.9\,\Omega$。\\
+方向系数为$D=\cfrac{120\times (1-cos\,\pi)^2}{197.9}=2.425$\\
+损耗电阻为$R_{\sigma}=\cfrac{2P_{\sigma}}{I^2_M}=\cfrac{1}{I^2_M}\cfrac{R_s}{2\pi a}\int_{-l}^{l}|I(z)|^2dz=\cfrac{R_s}{\pi a}\int_0^lsin^2k(l-z)dz=\cfrac{R_s}{\pi a}[\cfrac{1}{2}z+\cfrac{1}{4k}sin 2k(l-z)]_0^l=\cfrac{R_s}{\pi a}\cfrac{l}{2}=\cfrac{8.25\times 10^{-4}}{\pi\times 10^{-3}\times 30}\times \cfrac{1}{2}\times\cfrac{30}{2}=0.0657\,\Omega$\\
+天线效率为$e_r=\cfrac{R_r}{R_r+R_{\sigma}}=\cfrac{197.9}{197.9+0.0657}=99.97\,\%$\\
+天线增益为$G=De_r=2.425\times 0.9997=2.424$，即$G=10lg\,2.424=3.85\,dB$\\
+
+
+
+
+
+\end{document}

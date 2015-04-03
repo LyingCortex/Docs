@@ -1,0 +1,71 @@
+\beamer@endinputifotherversion {3.24pt}
+\headcommand {\slideentry {0}{0}{1}{1/1}{}{0}}
+\headcommand {\beamer@framepages {1}{1}}
+\headcommand {\slideentry {0}{0}{2}{2/2}{}{0}}
+\headcommand {\beamer@framepages {2}{2}}
+\headcommand {\sectionentry {1}{BSDE 简介}{3}{BSDE 简介}{0}}
+\headcommand {\beamer@sectionpages {1}{2}}
+\headcommand {\beamer@subsectionpages {1}{2}}
+\headcommand {\slideentry {1}{0}{3}{3/3}{}{0}}
+\headcommand {\beamer@framepages {3}{3}}
+\headcommand {\slideentry {1}{0}{4}{4/9}{}{0}}
+\headcommand {\beamer@framepages {4}{9}}
+\headcommand {\slideentry {1}{0}{5}{10/10}{}{0}}
+\headcommand {\beamer@framepages {10}{10}}
+\headcommand {\slideentry {1}{0}{6}{11/11}{}{0}}
+\headcommand {\beamer@framepages {11}{11}}
+\headcommand {\sectionentry {2}{研究的出发点}{12}{研究的出发点}{0}}
+\headcommand {\beamer@sectionpages {3}{11}}
+\headcommand {\beamer@subsectionpages {3}{11}}
+\headcommand {\slideentry {2}{0}{7}{12/12}{}{0}}
+\headcommand {\beamer@framepages {12}{12}}
+\headcommand {\beamer@subsectionentry {0}{2}{1}{13}{$L^p$ $(p\geq 1)$ 解的存在惟一性}}\headcommand {\beamer@subsectionpages {12}{12}}
+\headcommand {\slideentry {2}{1}{1}{13/34}{$L^p$ $(p\geq 1)$ 解的存在惟一性}{0}}
+\headcommand {\beamer@framepages {13}{34}}
+\headcommand {\beamer@subsectionentry {0}{2}{2}{35}{生成元表示定理}}\headcommand {\beamer@subsectionpages {13}{34}}
+\headcommand {\slideentry {2}{2}{1}{35/46}{生成元表示定理}{0}}
+\headcommand {\beamer@framepages {35}{46}}
+\headcommand {\sectionentry {3}{$L^p$ $(p>1)$ 解存在惟一性}{47}{$L^p$ $(p>1)$ 解存在惟一性}{0}}
+\headcommand {\beamer@sectionpages {12}{46}}
+\headcommand {\beamer@subsectionpages {35}{46}}
+\headcommand {\slideentry {3}{0}{2}{47/47}{}{0}}
+\headcommand {\beamer@framepages {47}{47}}
+\headcommand {\beamer@subsectionentry {0}{3}{1}{48}{$L^p$ $(p>1)$ 解存在惟一性的主要结果}}\headcommand {\beamer@subsectionpages {47}{47}}
+\headcommand {\slideentry {3}{1}{1}{48/52}{$L^p$ $(p>1)$ 解存在惟一性的主要结果}{0}}
+\headcommand {\beamer@framepages {48}{52}}
+\headcommand {\beamer@subsectionentry {0}{3}{2}{53}{证明简述}}\headcommand {\beamer@subsectionpages {48}{52}}
+\headcommand {\slideentry {3}{2}{1}{53/53}{证明简述}{0}}
+\headcommand {\beamer@framepages {53}{53}}
+\headcommand {\slideentry {3}{2}{2}{54/59}{证明简述}{0}}
+\headcommand {\beamer@framepages {54}{59}}
+\headcommand {\slideentry {3}{2}{3}{60/62}{证明简述}{0}}
+\headcommand {\beamer@framepages {60}{62}}
+\headcommand {\slideentry {3}{2}{4}{63/67}{证明简述}{0}}
+\headcommand {\beamer@framepages {63}{67}}
+\headcommand {\slideentry {3}{2}{5}{68/76}{证明简述}{0}}
+\headcommand {\beamer@framepages {68}{76}}
+\headcommand {\slideentry {3}{2}{6}{77/78}{证明简述}{0}}
+\headcommand {\beamer@framepages {77}{78}}
+\headcommand {\sectionentry {4}{$L^1$ 解存在惟一性}{79}{$L^1$ 解存在惟一性}{0}}
+\headcommand {\beamer@sectionpages {47}{78}}
+\headcommand {\beamer@subsectionpages {53}{78}}
+\headcommand {\slideentry {4}{0}{7}{79/79}{}{0}}
+\headcommand {\beamer@framepages {79}{79}}
+\headcommand {\beamer@subsectionentry {0}{4}{1}{80}{有限或无限时间终端多维 BSDE 的 $L^1$ 解的存在惟一性}}\headcommand {\beamer@subsectionpages {79}{79}}
+\headcommand {\slideentry {4}{1}{1}{80/83}{有限或无限时间终端多维 BSDE 的 $L^1$ 解的存在惟一性}{0}}
+\headcommand {\beamer@framepages {80}{83}}
+\headcommand {\beamer@subsectionentry {0}{4}{2}{84}{证明简述}}\headcommand {\beamer@subsectionpages {80}{83}}
+\headcommand {\slideentry {4}{2}{1}{84/85}{证明简述}{0}}
+\headcommand {\beamer@framepages {84}{85}}
+\headcommand {\slideentry {4}{2}{2}{86/86}{证明简述}{0}}
+\headcommand {\beamer@framepages {86}{86}}
+\headcommand {\sectionentry {5}{表示定理及应用}{87}{表示定理及应用}{0}}
+\headcommand {\beamer@sectionpages {79}{86}}
+\headcommand {\beamer@subsectionpages {84}{86}}
+\headcommand {\slideentry {5}{0}{3}{87/87}{}{0}}
+\headcommand {\beamer@framepages {87}{87}}
+\headcommand {\beamer@partpages {1}{87}}
+\headcommand {\beamer@subsectionpages {88}{87}}
+\headcommand {\beamer@sectionpages {87}{87}}
+\headcommand {\beamer@documentpages {87}}
+\headcommand {\def \inserttotalframenumber {22}}

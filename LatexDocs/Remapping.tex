@@ -1,0 +1,416 @@
+\documentclass[unknownkeysallowed]{beamer}
+\mode<presentation> {
+\usetheme{Madrid}
+}
+\usepackage{graphicx} % Allows including images
+\usepackage{booktabs} % Allows the use of \toprule, \midrule and \bottomrule in tables
+\usepackage{setspace}
+\usepackage{color}
+\usepackage{xcolor}
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{amssymb}
+\usepackage{mathrsfs}
+\usepackage{amsbsy}
+\usepackage{caption}
+\setbeamertemplate{caption}[numbered]
+\usepackage{xeCJK}
+\setCJKmainfont{Songti SC}
+\usefonttheme{professionalfonts}
+%\usefonttheme[onlymath]{serif}
+\hypersetup{CJKbookmarks=true}
+%----------------------------------------------------------------------------------------
+%	TITLE PAGE
+%----------------------------------------------------------------------------------------
+\newcommand{\vb}{\mathbf}
+\newcommand{\vg}{\boldsymbol}
+\newcommand{\diff}[2]{\frac{d #1}{d #2}}
+\newcommand{\pdiff}[2]{\frac{\partial #1}{\partial #2}}
+\newcommand{\avg}[1]{\overline{#1}}
+\newcommand{\dblavg}[1]{\overline{\overline{#1}}}
+
+
+\begin{document}
+
+%\begin{CJK}{UTF8}{gbsn}
+%\begin{CJK}{GBK}{song}
+\title[Arbitrary-Order Remapping]{Arbitrary-order conservative and consistent remapping and a theory of linear maps, part 1}
+\author{刘群} % Your name
+\institute[CESS] % Your institution as it will appear on the bottom of every slide, may be shorthand to save space
+{%Center for Earth System Science\\ Tsinghua University \\ % Your institution for the title page
+\medskip
+\textsc{Paper Authors: Paul A. Ullrich, Mark A. Taylor\\
+Submitted to \textit{Monthly Weather Review}, 2014.}
+}
+\date{December 26, 2014}% Date, can be changed to a custom date
+
+\begin{frame}
+\titlepage % Print the title page as the first slide
+\end{frame}
+\begin{spacing}{1.2}
+\begin{frame}
+\frametitle{为什么需要更好的插值算法}
+
+\begin{itemize}
+\item 由于气候系统的复杂性,以前的模式开发者在研究大气、海洋和陆面等不同的模式时采用了不同的网格和数值计算方法.\\% Due to the multi-faceted nature of the climate system, the global modeling community has historically designed models of the atmosphere, ocean and land surface using distinct numerical methods and meshes.
+\pause
+\item 目前的趋势是为了提高模式的准确性和精度,人们更倾向于针对不同的物理过程采用不同的计算网格.%In order to improve accuracy and efficiency of the modeling system, using different numerical meshes for particular physical processes
+\pause
+\item 为了耦合不同的分量,不同网格之间的通信是必需的, 就需要在不同的网格之间进行数据交换.%Some mechanism for communication between these meshes is necessary to couple these components and allow for proper accounting of globally conserved quantities.
+\pause
+\item 因此,研究球面上的各种不同网格之间的守恒、相容、单调的插值算子一直是模式开发者关注的问题.\\
+\end{itemize}
+\end{frame}
+
+%------------------------------------------------
+\begin{frame}
+\frametitle{插值算子构造的步骤}
+本文的算法应用在了 TempestRemap 插值软件包里。\par
+\pause
+插值算法构造的步骤如下：
+\begin{enumerate}
+\pause
+\item \textcolor[rgb]{0,0,1}{搜寻算法}：确定源网格上面的哪些点在几何上与目标网格点相邻,确保插值算法满足几何局部性(geometrical locality).\\
+%\pause
+%\scriptsize{鲁棒的搜索算法很难构造,原因是：网格线重合、重叠区域狭小、球面几何的非线性等.}%A robust search algorithm can be particularly difficult to define, since special cases such as co38incident grid lines, small overlap regions and the non-linearity of spherical geometry can quickly39 lead to conditioning issues}
+\normalsize
+\pause
+\item \textcolor[rgb]{0,0,1}{构造插值算子}：在源网格和目标网格之间进行插值,同时保留源网格次网格尺度的变化情况(sub-grid-scale variation of the source field).\\
+\end{enumerate}
+\end{frame}
+
+%------------------
+\begin{frame}
+\frametitle{如何构造守恒插值算子}
+非守恒的插值算子很容易构造，比如通过双线性插值或者某些高阶有限差分等, 但是这些算法不能保证守恒性, 即使对它们进行全局的守恒修正, 也会产生非局地的行为(strange non-localized behavior).
+\\
+\pause
+\textcolor[rgb]{0,0,1}{那么应该如何构造守恒插值算子呢?}
+\begin{itemize}%\setcounter{enumi}{2}
+\pause
+\item 一个常见的方法是应用Gauss-Green定理(Dukowicz 和 Kodis 1987) $\Rightarrow$ 将面积分转化为沿区域边界的线积分. \\
+\pause
+ 不足之处是需要具有解析表达式的势函数来描述网格的几何特性, 对于非结构化网格来说是非常困难的.
+\pause
+\item 为了解决这个问题, Erath(2013) 提出了一种方法, 首先通过求出不精确的面积积分来构造不守恒的插值算子, 然后重新调节生成守恒的插值算子. 但是这个方法会缺失一定的相容性.
+\end{itemize}
+\end{frame}
+
+%-------------------------------------------------------------------
+
+\begin{frame}
+\frametitle{TempestRemap采用的方法}
+\begin{itemize}
+\pause
+\item 为了解决这个问题, TempestRemap 采用了积分(quadrature)的方法先"猜测"一个插值算子, 然后加入守恒和相容等条件利用最小二乘法构造出守恒和相容的插值算子.%In order to overcome this problem, TempestRemap uses a quadrature-based approach to produce a “first guess” operator which is then projected onto the space of conservative and consistent solutions using a novel least-squares formulation. The resulting method avoids the need for line integrals and can be used to guarantee conservation and consistency (and, if desired, monotonicity) of the linear map.
+\pause
+\item 这个方法避免了线积分的计算, 而且可以保证守恒性和相容性, 同时, 如果需要的话, 还可以加入单调性的约束条件.
+\end{itemize}
+\end{frame}
+%-------------------------------------------------------------------
+
+
+%-------------------------------------------------------------------
+\begin{frame}
+\frametitle{插值算法的性能要求}
+线性插值算子$\vb{R}$定义如下:
+  \centerline{$\vg{\psi}^t = \mathbf{R} \vg{\psi}^s \Longleftrightarrow \forall\ i \in [1, \ldots, f^t], \psi_i^t=\displaystyle{\sum_{j=1}^{f^s}}R_{i j} \psi_j^s.$}
+  \pause
+其满足的性质如下:
+\begin{enumerate}
+\pause
+\item \textcolor[rgb]{0,0,1}{守恒(Conservative)} \\
+$\vb{R}\ \mbox{conservative} \Longleftrightarrow  \forall\ \vg{\psi}^s, \quad I^s[\vg{\psi}^s] = I^t[{\psi}^t]=I^t[\vb{R} \vg{\psi}^s].$
+\pause
+\item \textcolor[rgb]{0,0,1}{相容(Consistency)}\\
+$\vb{R}\ \mbox{consistent} \Longleftrightarrow  \vg{1}^t = \vb{R} \vg{1}^s \Longleftrightarrow \forall\ i \in [1, \ldots, f^t], \displaystyle{\sum_{j=1}^{f^s}}R_{i j} = 1.$
+\pause
+\item \textcolor[rgb]{0,0,1}{单调(Monotone)}\\
+$\vb{R}\ \mbox{monotone} \Longleftrightarrow \forall\ \vg{\psi}^s, \forall\ i \in [1, \ldots, f^t], \min \vg{\psi}^s \leq \psi^t_i \leq \max \vg{\psi}^s.$
+\end{enumerate}
+\end{frame}
+%-------------------------------------------------------------------
+
+
+
+\begin{frame}
+\frametitle{局部守恒性}
+\textcolor[rgb]{0,0,1}{Geometric locality}: let $\Omega^t$ and $\Omega^s$ denote the geometric regions associated with degrees of freedom  $\mathscr{F}^t$ and $\mathscr{F}^s$, the \textit{overlap region} associated with  $\Omega^t$ and $\Omega^s$ is denoted by  $\Omega^{ov}_{ij}$=  $\Omega^t \bigcap \Omega^s$. If  $\Omega^{ov}_{ij}\neq \varnothing$, then $\mathscr{F}_i^t$ and $\mathscr{F}_j^s$ are said to be \textcolor[rgb]{1,0,0}{local}. Regions on the overlap mesh are associated with corresponding local weights  $J^{ov}_{ij}$.
+\begin{figure}[c]
+\includegraphics[width=0.45\linewidth]{pictures/overlap.png}
+\end{figure}
+\end{frame}
+%--------------------------------------------------------------
+
+%-------------------------------------------------------------------
+\begin{frame}
+\frametitle{局部守恒性}
+Calculation of the local weights $J^{ov}_{ij}$ is performed via integration over the overlap region,
+$$J^{ov}_{ij}=\int_{\Omega_{ij}^{ov}}C_j^s(\vb{x})C_i^t(\vb{x})$$
+where $C_j^s(\vb{x})$ and $C_i^t(\vb{x})$ are functions associated with the degrees of freedom $\mathscr{F}_j^s$ and $\mathscr{F}_i^t$ that satisfy
+$$\int_{\Omega}C_j^s(\vb{x})=J_j^s, \quad \int_{\Omega}C_i^t(\vb{x})=J_i^t$$
+
+\end{frame}
+%--------------------------------------------------------------
+
+%-------------------------------------------------------------------
+\begin{frame}
+\frametitle{Local Sub-map 相关定理}
+\begin{theorem}[通过局部的插值算子构造整体插值算子]
+  Let $\hat{\mathbf{R}}^{(1)}, \ldots, \hat{\mathbf{R}}^{(N)}$ be a complete set of linear sub-maps which are conservative in $A^{(1)}, \ldots, A^{(N)}$.  Then the global linear map constructed via $$
+R_{ij} = \frac{1}{J^t_i} \sum_{k=1}^{N} \hat{R}^{(k)}_{ij} \left( \sum_{\ell \in A^{(k)}} J^{ov}_{i\ell} \right)
+$$ is conservative and consistent.
+
+\end{theorem}
+\end{frame}
+
+%-------------------------------------------------------------------
+\begin{frame}
+\frametitle{Remapping Finite Elements to Finite Volumes}
+This paper focuses specifically on nodal finite element methods over the set of Gauss-Lobatto-Legendre (GLL) nodes. The set of degrees of freedom on the sourcemesh are defined at the $N_p^2$ GLL nodes within the reference element with discontinuous basis functions.
+\begin{figure}[c]
+\includegraphics[width=0.6\linewidth]{pictures/geodistribution.png}
+
+\tiny{(a) Geometric distribution of degrees of freedom in a fourth-order Gauss-Lobatto-Legendre finite element. (b) Degrees of freedom in the fourth-order Gauss-Lobatto-Legendre reference element, with coordinate axes $a\in[-1,1]$ and $b\in [-1,1].$}
+\end{figure}
+
+
+\end{frame}
+
+%---------------------------------------------------
+\begin{frame}
+\frametitle{算法流程}
+\begin{figure}[c]
+\includegraphics[width=0.8\linewidth]{pictures/Process.png}
+\end{figure}
+\end{frame}
+
+%-------------------------------------------------------------------
+\begin{frame}
+\frametitle{基函数的选择}
+\begin{itemize}
+\item 对于构造一个近似守恒的插值算法来说, 要通过基函数的构造, 实现对于节点离散化的连续近似, 也就是说要能够通过基函数的某种组合获得所有点的信息, 包括那些非节点位置的函数值.
+\pause
+\item 对于四边形网格, 通常通过1维基函数$C_m(x)$的张量积来生成2维的基函数, 然后构造重建函数
+$$\psi_j^s(\vb{x})=\displaystyle{\sum_{m=0}^{N_p-1}\sum_{n=0}^{N_p-1}}(\psi_j^s)_{(m,n)}C_m(\alpha(\vb{x}))C_n(\beta(\vb{x}))$$
+其中, $N_p$为GLL多项式的阶数.
+\end{itemize}
+\end{frame}
+
+
+
+%-------------------------------------------------------------------
+\begin{frame}
+\frametitle{基函数的选择}
+$P_{N_p-1}(x)$ 是$P_{N_p-1}$阶Legendre多项式, $x_j$是$\diff{P_{N_p-1}(x)}{x}$的$N_p-2$个根, 再加上$\pm 1$:
+$$C_m(x) \equiv \frac{(x^2 - 1)}{N_p (N_p - 1) P_{N_p-1}(x_j) (x - x_j)} \diff{P_{N_p-1}(x)}{x},$$
+with corresponding weights
+$$w_m \equiv \int_{-1}^{1} C_m(x) dx = \frac{2}{N_p (N_p-1) \left[ P_{N_p-1}(x_j) \right]^2}.$$
+\end{frame}
+
+%-------------------------------------------------------------------
+\begin{frame}
+\frametitle{基函数的选择}
+\begin{figure}[c]
+\includegraphics[width=0.8\linewidth]{pictures/plot_basis.png}
+\\
+\tiny{Third- and fourth-order GLL basis functions used for the continuous reconstruction.}
+\end{figure}
+\end{frame}
+
+%-------------------------------------------------------------------
+\begin{frame}
+\frametitle{Building a "first guess" sub-map}
+"First guess" sub-map 仅仅是近似满足守恒和相容性条件, 它需要通过在多种类型的多边形重叠区域进行高阶的三角积分得到, 下图是将任意多边形划分成三角形的示意图.
+\begin{figure}[c]
+\includegraphics[width=0.75\linewidth]{pictures/plot_subdivided_poly.png}
+\\
+\tiny{Subdivision of a quadrilateral and pentagon into triangles.}
+\end{figure}
+\end{frame}
+
+%-------------------------------------------------------------------
+\begin{frame}
+\frametitle{三角积分的节点示意图}
+\begin{figure}[c]
+\includegraphics[width=0.8\linewidth]{pictures/plot_triangular_quadrature.png}
+\\
+\tiny{First-, fourth- and eighth-order triangular quadrature nodes.}
+\end{figure}
+$$\int_{\mathscr{F}_{ij}^{ov}}\psi_j^s(\vb{x})dA\approx \displaystyle{\sum_{k=1}^{N_q}}\psi_j^s(\vb{x}_k)\hat{w}_k J^{ov}_{ij}$$
+\end{frame}
+
+
+%-------------------------------------------------------------------
+\begin{frame}
+\frametitle{Consistency and Conservation Enforcement}
+\scriptsize
+{
+$\mbox{Minimize} \quad \displaystyle{\sum_{i=1}^{f^t} \sum_{j=1}^{f^s}} \frac{1}{2} ( \hat{R}_{ij} - \hat{R}^{\ast}_{ij} )^2 \quad$ subject to conservation and consistency conditions.\\
+\pause
+The least squares problem is solved directly via the Lagrangian.  Vectors $\vg{\lambda}$ and $\vg{\kappa}$ are defined with elements $\lambda_i$, $i \in [1, \ldots, f^t]$, and $\kappa_j$, $j \in [1, \ldots,$  $ f^s-1]$ respectively.  The Lagrangian takes the form}
+
+\scriptsize{$$\mathscr{L}(\vb{R}, \vg{\lambda}, \vg{\kappa}) = \sum_{i=1}^{f^t} \sum_{j=1}^{f^s} \frac{1}{2} ( \hat{R}_{ij} - \hat{R}^\ast_{ij} )^2 - \underbrace{\sum_{i=1}^{f^t} \lambda_i \left[ \left( \sum_{j=1}^{f^s} \hat{R}_{ij} \right) - 1 \right]}_{\mbox{consistency}} - \underbrace{\sum_{j=1}^{f^s-1} \kappa_j \left[ \left( \sum_{i=1}^{f^t} \hat{R}_{ij} J_i^t \right) - J_j^s \right]}_{\mbox{conservation}}.$$}
+\pause
+\scriptsize{$$\vb{\Rrightarrow} \left( \begin{array}{cc} \vb{I} & \vb{C}^T \\ \vb{C} & \vb{0} \end{array} \right) \left( \begin{array}{c} \hat{\vb{R}}_{ij} \\ \vg{\lambda} \\ \vg{\kappa} \end{array} \right) = \left( \begin{array}{c} \hat{\vb{R}}^\ast_{ij} \\ -\vg{1} \\ - \vb{J}^s \end{array} \right)$$}
+ where $\vb{C}$ is the $(f^t + f^s - 1) \times f^t f^s$ matrix defined by the derivatives $\partial \mathscr{L} / \partial \vg{\lambda}$ and $\partial \mathscr{L} / \partial \vg{\kappa}$.
+\end{frame}
+
+%-------------------------------------------------------------------
+\begin{frame}
+\frametitle{Monotonicity Preservation}
+In order to impose monotonicity, the least squares problem can be augmented with an  additional boundedness condition given by monotone property.
+\pause
+\begin{theorem}[The linear combination of $R_{ij}$]
+   If $\hat{R}^{(1)}_{ij}$ and $\hat{R}^{(2)}_{ij}$ are conservative and consistent linear sub-maps over $A^{(1)} = A^{(2)}$ and $B^{(1)} = B^{(2)}$ respectively,  then for $\omega \in [0,1]$, $\hat{R}_{ij} = \omega \hat{R}^{(1)}_{ij} + (1 - \omega) \hat{R}^{(2)}_{ij}$ is a consistent and conservative linear sub-map.
+\end{theorem}
+
+\pause 
+\centerline{$\hat{R}_{ij} = \omega \hat{R}^0_{ij} + (1 - \omega) \hat{R}^s_{ij}$}
+\pause 
+Finding a value of $\omega$ sufficiently large that $\hat{R}_{ij}$ has no negative entries.
+$$\omega = \max_{i,j} \left[ \max \left( \frac{- \hat{R}^s_{ij}}{\vert \hat{R}^0_{ij} - \hat{R}^s_{ij} \vert}, 0 \right) \right].$$
+\end{frame}
+
+
+
+%-------------------------------------------------------------------
+\begin{frame}
+\frametitle{数值测试结果-测试函数的选择}
+\begin{columns}[c]
+\column{.4\textwidth}
+\begin{figure}[c]
+\includegraphics[width=0.8\linewidth]{pictures/testfield.png}
+
+\end{figure}
+
+\column{.6\textwidth}
+\tiny{Fig. Contour plots of the three test fields used in this study. Fields (a) and (b) take on values in
+the range [1,3]. Field (c) takes on values in the approximate range [0.46, 1.54].}
+$$\psi = 2 + \cos^2 \theta \cos(2 \lambda) \quad (Y^2_2)$$
+$$\psi = 2 + \sin^{16}(2 \theta) \cos(16 \lambda) \quad (Y^{16}_{32})$$
+$$\psi = 1 - \tanh \left[ \frac{\rho^\prime}{d} \sin(\lambda^\prime - \omega^\prime t) \right]\text{  }(V_X)$$
+$$$$
+The first two fields are used to test performance for a \textcolor[rgb]{0,0,1}{smooth well-resolved field} and a \textcolor[rgb]{0,0,1}{high-frequency
+poorly resolved field} with rapidly changing gradients. The third field is a \textcolor[rgb]{0,0,1}{dual stationary vortex}.
+$$$$
+\end{columns}
+\end{frame}
+
+%-------------------------------------------------------------------
+\begin{frame}
+\frametitle{测试网格的选择}
+\begin{figure}[c]
+\includegraphics[width=0.46\linewidth]{pictures/grids.png}\\
+\tiny{A depiction of the four meshes studied in this manuscript: (a) Cubed-sphere(球面立方), (b) Greatcircle
+latitude-longitude, (c) Icosahedral(二十面体) / geodesic and (d) Refined cubed-sphere.}
+\end{figure}
+
+\end{frame}
+%-------------------------------------------------------------------
+
+%--------------------The first group-----------------------------------------------
+\begin{frame}
+\frametitle{a1. 测试结果的误差范数  $L_1, L_2 \text{和} L_\infty$}
+\scriptsize{Cubed-sphere mesh to great circle latitude-longitude mesh (\textcolor[rgb]{0,0,1}{non-monotonic}):}
+\begin{figure}[c]
+\includegraphics[width=0.5\linewidth]{pictures/error1.png}\\
+\tiny{Standard $L_1$, $L_2$ and $L_{\infty}$ error norms reported for conservative and consistent remapping
+of the three idealized fields from the cubed-sphere mesh to the $1^\circ$ great circle latitude-longitude
+mesh for cubed-sphere resolutions $n_e = 15,30,60$ and for three orders of accuracy $N_p = 2,3,4$.}
+\end{figure}
+\end{frame}
+%-------------------------------------------------------------------
+%-------------------------------------------------------------------
+\begin{frame}
+\frametitle{a2. 测试结果的误差范数 $L_{min} \text{和} L_{max}$}
+\begin{figure}[c]
+\includegraphics[width=0.4\linewidth]{pictures/error2.png}\\
+\tiny{Standard $L_{min}$ and $L_{max}$ error norms reported for conservative and consistent remapping
+of the three idealized fields from the cubed-sphere mesh to the $1^\circ$ great circle latitude-longitude
+mesh for cubed-sphere resolutions $n_e = 15,30,60$ and for three orders of accuracy $N_p = 2,3,4$. Circled data points indicate that the global minimum / maximum has been enhanced (i.e. that monotonicity was not maintained).}
+\end{figure}
+\end{frame}
+
+
+%------------------------------Second -------------------------------------
+\begin{frame}
+\frametitle{b1. 测试结果的误差范数 $L_1, L_2 \text{和}L_\infty$}
+\scriptsize{Cubed-sphere mesh to great circle latitude-longitude mesh (\textcolor[rgb]{0,0,1}{monotonic}):}
+\begin{figure}[c]
+\includegraphics[width=0.5\linewidth]{pictures/log_norm_2.png}\\
+\tiny{Standard $L_1$, $L_2$ and $L_{\infty}$ error norms reported for conservative, consistent and strictly monotonic remapping
+of the three idealized fields from the cubed-sphere mesh to the $1^\circ$ great circle latitude-longitude
+mesh for cubed-sphere resolutions $n_e = 15,30,60$ and for three orders of accuracy $N_p = 2,3,4$.}
+\end{figure}
+\end{frame}
+%-------------------------------------------------------------------
+%-------------------------------------------------------------------
+\begin{frame}
+\frametitle{b2. 测试结果的误差范数$L_{min} \text{和} L_{max}$}
+\begin{figure}[c]
+\includegraphics[width=0.4\linewidth]{pictures/log_maxmin_2.png}\\
+\tiny{Standard $L_{min}$ and $L_{max}$ error norms reported for conservative, consistent and strictly monotinic remapping
+of the three idealized fields from the cubed-sphere mesh to the $1^\circ$ great circle latitude-longitude
+mesh for cubed-sphere resolutions $n_e = 15,30,60$ and for three orders of accuracy $N_p = 2,3,4$. Circled data points indicate that the global minimum / maximum has been enhanced (i.e. that monotonicity was not maintained).}
+\end{figure}
+\end{frame}
+
+
+%------------------------------Third -------------------------------------
+\begin{frame}
+\frametitle{c1. 测试结果的误差范数 $L_1, L_2 \text{和}L_\infty$}
+\scriptsize{Cubed-sphere mesh to geodesic mesh (non-monotonic):}
+\begin{figure}[c]
+\includegraphics[width=0.5\linewidth]{pictures/log_norm_3.png}\\
+\tiny{Standard $L_1$, $L_2$ and $L_{\infty}$ error norms reported for conservative and consistent remapping
+of the three idealized fields from the cubed-sphere mesh to the $N_i=72$ geodesic mesh for cubed-sphere resolutions $n_e = 15,30,60$ and for three orders of accuracy $N_p = 2,3,4$.}
+\end{figure}
+\end{frame}
+%-------------------------------------------------------------------
+%-------------------------------------------------------------------
+\begin{frame}
+\frametitle{c2. 测试结果的误差范数$L_{min} \text{和} L_{max}$}
+\begin{figure}[c]
+\includegraphics[width=0.4\linewidth]{pictures/log_maxmin_3.png}\\
+\tiny{Standard $L_{min}$ and $L_{max}$ error norms reported for conservative, consistent and strictly monotinic remapping
+of the three idealized fields from the cubed-sphere mesh to the $N_i=72$ geodesic mesh for cubed-sphere resolutions $n_e = 15,30,60$ and for three orders of accuracy $N_p = 2,3,4$.}
+\end{figure}
+\end{frame}
+
+
+
+
+%----------------------------Fourth -------------------------------------
+\begin{frame}
+\frametitle{d. Real data test}
+\scriptsize{Refined cubed-sphere mesh to great circle latitude-longitude mesh (real data)}
+\begin{columns}[l]
+\column{.5\textwidth}
+\begin{figure}[c]
+\includegraphics[width=0.8\linewidth]{pictures/realmap.png}
+\end{figure}
+\column{.5\textwidth}
+\tiny{Two “real data” tests for remapping from the variable resolution cubed-sphere mesh with $N_p = 4$ to $0.25^\circ $ great circle latitude-longitude grid. \textcolor[rgb]{0,0,1}{(a)} Surface pressure
+from a variable resolution simulation using \textcolor[rgb]{0,0,1}{conservative and consistent} remapping. Observe that
+the detail of the result is much finer between 135W and 90W in the Northern hemisphere, corresponding
+to the region of highest mesh refinement. \textcolor[rgb]{0,0,1}{(b)} Percentage plant functional type (barren
+land) using \textcolor[rgb]{0,0,1}{conservative, consistent} and \textcolor[rgb]{1,0,0}{monotone} remapping. This field is highly \textcolor[rgb]{0,0,1}{discontinuous} and requires that the data be constrained to the interval [0, 100] to be considered meaningful.}
+
+\end{columns}
+\end{frame}
+%-------------------------------------------------------------------
+
+
+
+
+
+%---------------p--------THE END---------------------%
+\begin{frame}
+\frametitle{The End}
+%\Huge{\centerline{The End}} %
+\Huge{\centerline{Thank you!}}
+\end{frame}
+\end{spacing}
+%\end{CJK}
+\end{document}
