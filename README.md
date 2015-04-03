@@ -1,1 +1,1 @@
-# Docs for daily study
+Docs for study
